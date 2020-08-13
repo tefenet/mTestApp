@@ -1,0 +1,14 @@
+entity Product {
+	name String
+	price BigDecimal
+}
+entity Sales {
+	state State
+	date LocalDate
+}
+enum State {
+	IN_CHARGE, SHIPPED, DELIVERED
+}
+relationship ManyToOne {
+	Sales{product} to Product
+}
