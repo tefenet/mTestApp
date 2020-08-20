@@ -5,7 +5,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NavLink as Link } from 'react-router-dom';
 import { Translate, translate } from 'react-jhipster';
 import { NavDropdown } from './menu-components';
-
+import Menu from '@material-ui/core/Menu';
+import { Button, IconButton, Collapse, Typography } from '@material-ui/core';
+import AccountBoxSharpIcon from '@material-ui/icons/AccountBoxSharp';
 const accountMenuItemsAuthenticated = (
   <>
     <MenuItem icon="wrench" to="/account/settings">
@@ -22,7 +24,7 @@ const accountMenuItemsAuthenticated = (
 
 const accountMenuItems = (
   <>
-    <MenuItem id="login-item" icon="sign-in-alt" to="/login">
+    <MenuItem icon="sign-in-alt" to="/login">
       <Translate contentKey="global.menu.account.login">Sign in</Translate>
     </MenuItem>
     <MenuItem icon="sign-in-alt" to="/account/register">
@@ -31,8 +33,36 @@ const accountMenuItems = (
   </>
 );
 
+// export const AccountMenu=({ isAuthenticated = false }) =>{
+//   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+//   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+//     setAnchorEl(event.currentTarget);
+//   };
+
+//   const handleClose = () => {
+//     setAnchorEl(null);
+//   };
+
+//   return (
+//     <div>
+//       <Typography variant="h6" color="initial" onClick={handleClick}>
+//         {translate('global.menu.account.main')}
+//         </Typography>
+//       <Menu
+//         id="account-menu"
+//         anchorEl={anchorEl}
+//         keepMounted
+//         open={Boolean(anchorEl)}
+//         onClose={handleClose}        
+//       >
+//         {isAuthenticated ? accountMenuItemsAuthenticated : accountMenuItems}
+//       </Menu>
+//     </div>
+//   );
+// }
 export const AccountMenu = ({ isAuthenticated = false }) => (
-  <NavDropdown icon="user" name={translate('global.menu.account.main')} id="account-menu">
+  <NavDropdown name={translate('global.menu.account.main')} id="account-menu">
     {isAuthenticated ? accountMenuItemsAuthenticated : accountMenuItems}
   </NavDropdown>
 );

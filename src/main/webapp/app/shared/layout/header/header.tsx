@@ -8,8 +8,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NavLink as Link } from 'react-router-dom';
 import LoadingBar from 'react-redux-loading-bar';
 
-import { Home, Brand } from './header-components';
-import { AdminMenu, EntitiesMenu, AccountMenu, LocaleMenu } from '../menus';
+import { Brand } from './header-components';
+import { AdminMenu, EntitiesMenu,AccountMenu, LocaleMenu } from '../menus';
+import { Typography } from '@material-ui/core';
 
 export interface IHeaderProps {
   isAuthenticated: boolean;
@@ -28,37 +29,26 @@ const Header = (props: IHeaderProps) => {
     const langKey = event.target.value;
     Storage.session.set('locale', langKey);
     props.onLocaleChange(langKey);
-  };
-
-  const renderDevRibbon = () =>
-    props.isInProduction === false ? (
-      <div className="ribbon dev">
-        <a href="">
-          <Translate contentKey={`global.ribbon.${props.ribbonEnv}`} />
-        </a>
-      </div>
-    ) : null;
+  }; 
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   /* jhipster-needle-add-element-to-menu - JHipster will add new menu items here */
-
+  
   return (
-    <div id="app-header">
-      {renderDevRibbon()}
+    <div id="app-header">      
       <LoadingBar className="loading-bar" />
-      <Navbar dark expand="sm" fixed="top" className="jh-navbar">
+      <Navbar dark expand="sm" className="jh-navbar">
         <NavbarToggler aria-label="Menu" onClick={toggleMenu} />
-        <Brand />
+        <Brand />        
         <Collapse isOpen={menuOpen} navbar>
-          <Nav id="header-tabs" className="ml-auto" navbar>
-            <Home />
-            {props.isAuthenticated && <EntitiesMenu />}
+          <Nav id="header-tabs" className="ml-auto" navbar>          
+            {props.isAuthenticated && <EntitiesMenu />}            
             {props.isAuthenticated && props.isAdmin && <AdminMenu showSwagger={props.isSwaggerEnabled} />}
-            <LocaleMenu currentLocale={props.currentLocale} onClick={handleLocaleChange} />
-            <AccountMenu isAuthenticated={props.isAuthenticated} />
+            <LocaleMenu currentLocale={props.currentLocale} onClick={handleLocaleChange} />            
+            <AccountMenu isAuthenticated={props.isAuthenticated} />            
           </Nav>
-        </Collapse>
+        </Collapse>        
       </Navbar>
     </div>
   );

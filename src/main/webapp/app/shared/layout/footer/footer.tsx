@@ -3,17 +3,28 @@ import './footer.scss';
 import React from 'react';
 import { Translate } from 'react-jhipster';
 import { Col, Row } from 'reactstrap';
+import { Container, makeStyles } from '@material-ui/core';
+import {neveTheme}from '../../../theme';
+
+const useStyles = makeStyles(theme => ({
+  footerContainer: {    
+    height:"42px",
+    paddingTop: "7px",    
+    paddingBottom: "7px",
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.secondary.main,
+    textAlign:"center"
+  }
+}));
 
 const Footer = props => (
-  <div className="footer page-content">
-    <Row>
-      <Col md="12">
-        <p>
-          <Translate contentKey="footer">Your footer</Translate>
-        </p>
+  
+    <Container maxWidth={false} className={useStyles(neveTheme).footerContainer}>
+      <Col md="12" >        
+        All rights reserved © 2020 Merlion Techs        
       </Col>
-    </Row>
-  </div>
+    </Container>
+  
 );
 
 export default Footer;

@@ -2,34 +2,25 @@ import React from 'react';
 import { Translate } from 'react-jhipster';
 
 import { NavItem, NavLink, NavbarBrand } from 'reactstrap';
-import { NavLink as Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import appConfig from 'app/config/constants';
+import Link from '@material-ui/core/Link';
+import { Container, makeStyles } from '@material-ui/core';
+import {neveTheme}from '../../../theme';
+const useStyles = makeStyles(theme => ({
+  mainContainer: {
+    width: "145px",
+    paddingTop: "7px",    
+    paddingBottom: "7px",
+    backgroundColor: theme.palette.primary.main,
+  }
+}));
 
-export const BrandIcon = props => (
-  <div {...props} className="brand-icon">
-    <img src="content/images/logo-jhipster.png" alt="Logo" />
-  </div>
-);
-
-export const Brand = props => (
-  <NavbarBrand tag={Link} to="/" className="brand-logo">
-    <BrandIcon />
-    <span className="brand-title">
-      <Translate contentKey="global.title">Test</Translate>
-    </span>
-    <span className="navbar-version">{appConfig.VERSION}</span>
-  </NavbarBrand>
-);
-
-export const Home = props => (
-  <NavItem>
-    <NavLink tag={Link} to="/" className="d-flex align-items-center">
-      <FontAwesomeIcon icon="home" />
-      <span>
-        <Translate contentKey="global.menu.home">Home</Translate>
-      </span>
-    </NavLink>
-  </NavItem>
+export const Brand = () => ( 
+  <Container className={useStyles(neveTheme).mainContainer}>
+    <Link href="/" >
+      <img src="content/images/cropped-logo-blanco-png.png" alt="Logo" height="100%" width="100%" />
+    </Link>  
+  </Container>  
 );

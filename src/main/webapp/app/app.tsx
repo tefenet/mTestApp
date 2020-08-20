@@ -18,6 +18,7 @@ import { hasAnyAuthority } from 'app/shared/auth/private-route';
 import ErrorBoundary from 'app/shared/error/error-boundary';
 import { AUTHORITIES } from 'app/config/constants';
 import AppRoutes from 'app/routes';
+import { Grid, Container } from '@material-ui/core';
 
 const baseHref = document.querySelector('base').getAttribute('href').replace(/\/$/, '');
 
@@ -29,12 +30,13 @@ export const App = (props: IAppProps) => {
     props.getProfile();
   }, []);
 
-  const paddingTop = '60px';
+  const paddingTop = '0px';
   return (
     <Router basename={baseHref}>
       <div className="app-container" style={{ paddingTop }}>
         <ToastContainer position={toast.POSITION.TOP_LEFT} className="toastify-container" toastClassName="toastify-toast" />
         <ErrorBoundary>
+          <Container maxWidth={false} disableGutters={true}>
           <Header
             isAuthenticated={props.isAuthenticated}
             isAdmin={props.isAdmin}
@@ -44,16 +46,15 @@ export const App = (props: IAppProps) => {
             isInProduction={props.isInProduction}
             isSwaggerEnabled={props.isSwaggerEnabled}
           />
-        </ErrorBoundary>
-        <div className="container-fluid view-container" id="app-view-container">
-          <Card className="jh-card">
+          </Container>
+        </ErrorBoundary>        
+          
             <ErrorBoundary>
               <AppRoutes />
             </ErrorBoundary>
-          </Card>
-          <Footer />
-        </div>
+        
       </div>
+      <Footer />
     </Router>
   );
 };

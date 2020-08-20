@@ -11,7 +11,9 @@ import { clearAuthentication } from './shared/reducers/authentication';
 import ErrorBoundary from './shared/error/error-boundary';
 import AppComponent from './app';
 import { loadIcons } from './config/icon-loader';
-
+import { neveTheme } from './theme';
+import { ThemeProvider, Typography } from '@material-ui/core';
+import CssBaseline from '@material-ui/core/CssBaseline';
 const devTools = process.env.NODE_ENV === 'development' ? <DevTools /> : null;
 
 const store = initStore();
@@ -27,15 +29,17 @@ const rootEl = document.getElementById('root');
 const render = Component =>
   // eslint-disable-next-line react/no-render-return-value
   ReactDOM.render(
-    <ErrorBoundary>
-      <Provider store={store}>
-        <div>
+    <ThemeProvider theme={neveTheme}>
+      <CssBaseline/>
+      <ErrorBoundary>
+      <Provider store={store}>        
           {/* If this slows down the app in dev disable it and enable when required  */}
-          {devTools}
+          {devTools}          
           <Component />
-        </div>
+          
       </Provider>
-    </ErrorBoundary>,
+    </ErrorBoundary>
+    </ThemeProvider>,    
     rootEl
   );
 

@@ -57,13 +57,23 @@ module.exports = options => ({
         exclude: [utils.root('node_modules')]
       },
       {
-        test: /\.(jpe?g|png|gif|svg|woff2?|ttf|eot)$/i,
+        test: /\.(jpe?g|png|gif|svg)$/i,
         loader: 'file-loader',
         options: {
           digest: 'hex',
           hash: 'sha512',
           name: 'content/[hash].[ext]'
         }
+      },
+      {test: /\.(woff|woff2|eot|ttf)$/i,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 8192,
+            },
+          },
+        ],
       },
       {
         enforce: 'pre',
