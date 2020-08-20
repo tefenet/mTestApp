@@ -1,8 +1,10 @@
 package merliontechs.web.rest;
 
 import merliontechs.domain.Sales;
-import merliontechs.repository.SalesRepository;
+import merliontechs.service.SalesService;
 import merliontechs.web.rest.errors.BadRequestAlertException;
+import merliontechs.service.dto.SalesCriteria;
+import merliontechs.service.SalesQueryService;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -10,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -23,7 +24,6 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api")
-@Transactional
 public class SalesResource {
 
     private final Logger log = LoggerFactory.getLogger(SalesResource.class);
@@ -33,10 +33,13 @@ public class SalesResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    private final SalesRepository salesRepository;
+    private final SalesService salesService;
 
-    public SalesResource(SalesRepository salesRepository) {
-        this.salesRepository = salesRepository;
+    private final SalesQueryService salesQueryService;
+
+    public SalesResource(SalesService salesService, SalesQueryService salesQueryService) {
+        this.salesService = salesService;
+        this.salesQueryService = salesQueryService;
     }
 
     /**
@@ -52,7 +55,7 @@ public class SalesResource {
         if (sales.getId() != null) {
             throw new BadRequestAlertException("A new sales cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Sales result = salesRepository.save(sales);
+        Sales result = salesService.save(sales);
         return ResponseEntity.created(new URI("/api/sales/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -73,7 +76,7 @@ public class SalesResource {
         if (sales.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        Sales result = salesRepository.save(sales);
+        Sales result = salesService.save(sales);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, sales.getId().toString()))
             .body(result);
@@ -82,12 +85,26 @@ public class SalesResource {
     /**
      * {@code GET  /sales} : get all the sales.
      *
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of sales in body.
      */
     @GetMapping("/sales")
-    public List<Sales> getAllSales() {
-        log.debug("REST request to get all Sales");
-        return salesRepository.findAll();
+    public ResponseEntity<List<Sales>> getAllSales(SalesCriteria criteria) {
+        log.debug("REST request to get Sales by criteria: {}", criteria);
+        List<Sales> entityList = salesQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
+    }
+
+    /**
+     * {@code GET  /sales/count} : count all the sales.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/sales/count")
+    public ResponseEntity<Long> countSales(SalesCriteria criteria) {
+        log.debug("REST request to count Sales by criteria: {}", criteria);
+        return ResponseEntity.ok().body(salesQueryService.countByCriteria(criteria));
     }
 
     /**
@@ -99,7 +116,7 @@ public class SalesResource {
     @GetMapping("/sales/{id}")
     public ResponseEntity<Sales> getSales(@PathVariable Long id) {
         log.debug("REST request to get Sales : {}", id);
-        Optional<Sales> sales = salesRepository.findById(id);
+        Optional<Sales> sales = salesService.findOne(id);
         return ResponseUtil.wrapOrNotFound(sales);
     }
 
@@ -112,7 +129,7 @@ public class SalesResource {
     @DeleteMapping("/sales/{id}")
     public ResponseEntity<Void> deleteSales(@PathVariable Long id) {
         log.debug("REST request to delete Sales : {}", id);
-        salesRepository.deleteById(id);
+        salesService.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 }
