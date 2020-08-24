@@ -28,7 +28,7 @@ export const App = (props: IAppProps) => {
   useEffect(() => {
     props.getSession();
     props.getProfile();
-  }, []);
+  }, [props]);
 
   const paddingTop = '0px';
   return (

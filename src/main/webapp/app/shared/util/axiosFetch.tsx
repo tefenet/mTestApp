@@ -39,7 +39,7 @@ const useAxiosFetch = (url: string, timeout: number) => {
       unmounted = true;
       source.cancel("Cancelling in cleanup");
     };
-  }, []);
+  }, [timeout, url]);
   
   return { data, loading, error, errorMessage };
 };
