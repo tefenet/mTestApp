@@ -69,7 +69,19 @@ export const neveTheme = createMuiTheme({
         color:themePalette.secondary.main,
         '&:hover':{
           color:"#002a49",
-        }        
+        },
+      h6:{      
+        fontFamily: 'Graphik',  
+        fontSize: "1vh",
+        lineHeight: "1vh",
+        letterSpacing: "0px",
+        fontWeight: 100,
+        textTransform: "none",
+        color:themePalette.secondary.main,
+        '&:hover':{
+          color:"#002a49",
+        }
+      }
       },
       button:{
         fontFamily:"Poppins",

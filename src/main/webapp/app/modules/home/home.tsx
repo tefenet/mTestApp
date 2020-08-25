@@ -10,6 +10,7 @@ import { IRootState } from 'app/shared/reducers';
 import { Grid, makeStyles, Container, Typography, Button } from '@material-ui/core';
 import { blueGrey, blue } from '@material-ui/core/colors';
 import { neveTheme } from 'app/theme';
+import { GrapHome } from './GrapHome';
 
 export type IHomeProp = StateProps;
 
@@ -54,13 +55,18 @@ const useStyles = makeStyles(theme => ({
 
 
 export const Home = (props: IHomeProp) => {
-  const { account } = props;
-
+  const { account } = props;  
+  const one=useStyles().containerOne
+  const two=useStyles().containerTwo
+  const gridcol=useStyles().gridCol
+  const buttonInit=useStyles().butonInit
+  const imagen= useStyles().image
   return (
     <Container maxWidth={false} disableGutters={true}>
-
-      <Container maxWidth={false} className={useStyles().containerOne} disableGutters={true}>
-        <Container maxWidth={false} className={useStyles().containerTwo} disableGutters={true}>
+      {account && account.login ? (<GrapHome/>):(
+      <Container maxWidth={false} disableGutters={true}>
+      <Container maxWidth={false} className={one} disableGutters={true}>
+        <Container maxWidth={false} className={two} disableGutters={true}>
 
           <Grid
             container
@@ -80,7 +86,7 @@ export const Home = (props: IHomeProp) => {
               alignItems="center"
               alignContent="center"
               wrap="nowrap"
-              className={useStyles().gridCol}
+              className={gridcol}
             >
               <Typography align="center" variant="h2" paragraph={true} >
                 <Translate contentKey="home.title">Welcome, Java Hipster!</Translate>
@@ -88,47 +94,31 @@ export const Home = (props: IHomeProp) => {
               <Typography align="center" variant="subtitle1" >
                 <Translate contentKey="home.subtitle">This is your homepage</Translate>
               </Typography>
-              <Button className={useStyles().butonInit} >
+              <Button className={buttonInit} >
                 <Typography variant="button" color="initial">contact us</Typography>
               </Button>
             </Grid>
           </Grid>
         </Container>
       </Container>
-      
-        {account && account.login ? (
-          <Grid container spacing={1} justify="center">
-            <Container maxWidth="xs">
-          <div>
-            <Alert color="success">
-              <Translate contentKey="home.logged.message" interpolate={{ username: account.login }}>
-                You are logged in as user {account.login}.
-              </Translate>
-            </Alert>
-          </div>  
-          </Container>
-          </Grid>
-        ) : (
-            <Container maxWidth={false}>
-              <Grid
-                container
-                spacing={2}
-                direction="row"
-                justify="flex-start"
-                alignItems="flex-start"
-                alignContent="stretch"
-                wrap="nowrap"                
-              >
-                <Grid
-                  container={true}
-                  spacing={1}
-                  direction="column"
-                  justify="center"
-                  alignItems="center"
-                  alignContent="center"
-                  wrap="nowrap"
-                >
-                  <div>
+          <Grid container spacing={1} 
+          direction="row"
+          justify="flex-start"
+          alignItems="center"
+          alignContent="stretch"
+          wrap="nowrap"                
+        >
+          <Grid
+            container={true}
+            spacing={1}
+            direction="column"
+            justify="center"
+            alignItems="center"
+            alignContent="center"
+            wrap="nowrap"
+            xs={6}
+          >
+            <div>
                     <Alert color="warning">
                       <Translate contentKey="global.messages.info.authenticated.prefix">If you want to </Translate>
                       <Link to="/login" className="alert-link">
@@ -148,27 +138,6 @@ export const Home = (props: IHomeProp) => {
                       </Link>
                     </Alert>
                   </div>
-                </Grid>
-              </Grid>
-            </Container>
-          )}
-          <Grid container spacing={1} 
-          direction="row"
-          justify="flex-start"
-          alignItems="center"
-          alignContent="stretch"
-          wrap="nowrap"                
-        >
-          <Grid
-            container={true}
-            spacing={1}
-            direction="column"
-            justify="center"
-            alignItems="center"
-            alignContent="center"
-            wrap="nowrap"
-            xs={6}
-          >
         <p>
           <Translate contentKey="home.question">If you have any question on JHipster:</Translate>
         </p>
@@ -208,10 +177,7 @@ export const Home = (props: IHomeProp) => {
           </a>
           !
         </p>
-        </Grid>
-        <Grid container spacing={1} direction="column" xs={6} sm={3}>
-          
-        </Grid>
+        </Grid>        
         <Grid
                   container={true}
                   spacing={1}
@@ -220,16 +186,18 @@ export const Home = (props: IHomeProp) => {
                   alignItems="center"
                   alignContent="center"
                   wrap="nowrap"
-                  xs={6} sm={3}
+                  xs={6}
+                  style={{padding:"70px 70px 70px 70px"}}
                 >
-                  <Container className={useStyles().image} component="img" src="content/images/LOGO-OK-PNG.png">
+                  <Container className={imagen} component="img" src="content/images/LOGO-OK-PNG.png">
                     
                   </Container>
                   
                 </Grid>
-        </Grid>
-      
+        </Grid>       
     </Container>
+    )}
+    </Container>  
   );
 };
 

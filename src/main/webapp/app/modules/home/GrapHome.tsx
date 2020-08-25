@@ -1,13 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, SetStateAction } from 'react';
 import axios from 'axios';
 import { Translate } from 'react-jhipster';
 import useAxiosFetch from 'app/shared/util/axiosFetch';
 import { Link } from 'react-router-dom';
 import LineChart, { CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line, BarChart, Bar, Label } from 'recharts'
-import { Container, Grid } from '@material-ui/core';    
+import { Container, Grid, ThemeProvider } from '@material-ui/core';    
 import { ChartBeans } from 'app/shared/util/ChartBeans';
+import { DeliveredGraph } from './deliveredGraph';
+import {TotalSalesGraph} from './totalSalesGraph'
+import { RankingProdGraph, ProdRank } from './rankingProdGrpah';
+import { IIncomeRank, RankingIncomesGraph } from './rankingIcomesGraph';
+import { neveTheme } from 'app/theme';
 
-interface IDataGraph {
+export interface IDataGraph {
   delivered: { date: string; amount: number }[],
   total: { date: string; amount: number }[],
   count: { productID: number; amount: number }[],
@@ -59,80 +64,62 @@ export const GrapHome = () => {
     }
   }, [state])
 
-  const [prodsCount, setCounts] = useState<{ productName: string, amount: number }[]>(null);
-  const [prodsIncome, setIncomes] = useState<{ productName: string, income: number }[]>(null);
+  const [prodsCount, setCounts] = useState<ProdRank>({prop:null});
+  const [prodsIncome, setIncomes] = useState<IIncomeRank>(null);
   useEffect(() => {
     if (response) {
-      setCounts(Array.from(state.count)
-        .map(productSale => { return { productName: response.find(product => product.id === productSale.productID).name, amount: productSale.amount } }))
-      setIncomes(Array.from(state.incomes)
-        .map(productSale => { return { productName: response.find(product => product.id === productSale.productID).name, income: productSale.income } }))
+      setCounts({prop: Array.from(state.count)
+        .map(productSale =>   
+          {return {productName: response.find(product => product.id === productSale.productID).name, 
+            amount: productSale.amount }
+          })})
+      setIncomes({prop: Array.from(state.incomes)
+        .map(productSale => { return { productName: response.find(product => product.id === productSale.productID).name, income: productSale.income } })})
     }
-  }, [state, response])
+  }, [state, response])  
 
-  
-  return(
-    <Container maxWidth={false}>
-      
-    {data  ?(
-      <Grid container spacing={1}
-    direction="row"
-            justify="flex-start"
-            alignItems="flex-start"
-            alignContent="stretch"
-            wrap="nowrap"
-            >  
-      
-      <Grid
-      container={true}
-      spacing={1}
-      direction="column"
-      justify="center"
-      alignItems="center"
-      alignContent="center"
-      wrap="nowrap"
-      // className={useStyles().gridCol}
-    >    
-        <BarChart  width={630} height={450} data={state.delivered}  margin={{ top: 40, right: 30, left: 20, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 2" />
-        <XAxis dataKey="date">
-          <Label value="days" offset={0} position="insideBottom" />
-        </XAxis>
-        <YAxis label={{ value: 'sales delivered', angle: -90, position: 'insideLeft' }}/>
-        <Tooltip />
-        <Legend />
-        <Bar dataKey="amount" fill="#8884d8" />
-        </BarChart>      
-      </Grid>
-      <Grid
-      container={true}
-      spacing={1}
-      direction="column"
-      justify="center"
-      alignItems="center"
-      alignContent="center"
-      wrap="nowrap"
-      // className={useStyles().gridCol}
-    >    
-        <BarChart  width={630} height={450} data={state.total}  margin={{ top: 40, right: 30, left: 20, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 2" />
-        <XAxis dataKey="date">
-          <Label value="days" offset={0} position="insideBottom" />
-        </XAxis>
-        <YAxis label={{ value: 'total sales', angle: -90, position: 'insideLeft' }}/>
-        <Tooltip />
-        <Legend />
-        <Bar dataKey="amount" fill="#a210d8" />
-        </BarChart>      
-      </Grid>
-      </Grid>
-      ):!loading && (
-            <div className="alert alert-warning">
-              <Translate contentKey="testApp.sales.home.notFound">No Sales found</Translate>
-            </div>
-          )
+  return (
+    <Container maxWidth={false} disableGutters={true}>
+
+      {state ? (
+        <Container maxWidth={false} disableGutters={true}>
+        <Grid container spacing={1}
+          direction="row"
+          justify="flex-start"
+          alignItems="flex-start"
+          alignContent="stretch"
+          wrap="nowrap"
+          
+        >
+          <DeliveredGraph {...state} />
+          <TotalSalesGraph {...state} />
+        </Grid>
+        {(prodsCount && prodsIncome)?(
+        <Grid container spacing={1}
+        direction="row"
+        justify="flex-start"
+        alignItems="flex-start"
+        alignContent="stretch"
+        wrap="nowrap"
+        style={{backgroundColor:neveTheme.palette.secondary.main}}
+      >
         
-        }
+        <RankingProdGraph {...prodsCount} />
+        <RankingIncomesGraph {...prodsIncome} />
+      </Grid>): !loading && (
+        <Container maxWidth="xs">
+            <div className="alert alert-warning">
+                <Translate contentKey="testApp.sales.home.notFound">No Products found</Translate>
+            </div>  
+        </Container>)}
       </Container>
+      ) : !loading && (
+        <div className="alert alert-warning">
+          <Translate contentKey="testApp.sales.home.notFound">No Sales found</Translate>
+        </div>
+      )
+
+      }
+    </Container>
   )
 }

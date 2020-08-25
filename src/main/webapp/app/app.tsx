@@ -3,7 +3,6 @@ import './app.scss';
 
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Card } from 'reactstrap';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import { hot } from 'react-hot-loader';
@@ -18,7 +17,7 @@ import { hasAnyAuthority } from 'app/shared/auth/private-route';
 import ErrorBoundary from 'app/shared/error/error-boundary';
 import { AUTHORITIES } from 'app/config/constants';
 import AppRoutes from 'app/routes';
-import { Grid, Container } from '@material-ui/core';
+import { Container} from '@material-ui/core';
 
 const baseHref = document.querySelector('base').getAttribute('href').replace(/\/$/, '');
 
@@ -30,10 +29,11 @@ export const App = (props: IAppProps) => {
     props.getProfile();
   }, [props]);
 
-  const paddingTop = '0px';
+  const paddingTop = '0px';  
   return (
     <Router basename={baseHref}>
-      <div className="app-container" style={{ paddingTop }}>
+      <Container disableGutters={true} maxWidth={false} className="appContainer" style={{minHeight:'calc(100vh - 42px)'}} >
+      
         <ToastContainer position={toast.POSITION.TOP_LEFT} className="toastify-container" toastClassName="toastify-toast" />
         <ErrorBoundary>
           <Container maxWidth={false} disableGutters={true}>
@@ -52,8 +52,8 @@ export const App = (props: IAppProps) => {
             <ErrorBoundary>
               <AppRoutes />
             </ErrorBoundary>
-        
-      </div>
+          </Container>
+      
       <Footer />
     </Router>
   );
