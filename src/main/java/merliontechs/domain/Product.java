@@ -80,14 +80,17 @@ public class Product implements Serializable {
     public int hashCode() {
         return 31;
     }
+     public int compareTo(Product p){
+        return p.getId().intValue() - this.id.intValue();
+     }
 
     // prettier-ignore
     @Override
     public String toString() {
         return "Product{" +
-            "id=" + getId() +
-            ", name='" + getName() + "'" +
-            ", price=" + getPrice() +
+            "\"id\":" + getId() +
+            ", \"name\":\"" + getName() + "\"" +
+            ", \"price\":" + getPrice() +
             "}";
     }
 }

@@ -5,7 +5,7 @@ const renderActiveShape = (props) => {
     const RADIAN = Math.PI / 180;
     const {
       cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle,
-      fill, payload, percent, income,
+      fill, payload, percent, income, productName
     } = props;
     const sin = Math.sin(-RADIAN * midAngle);
     const cos = Math.cos(-RADIAN * midAngle);            
@@ -34,7 +34,7 @@ const renderActiveShape = (props) => {
           outerRadius={outerRadius + 10}
           fill="#436375"
         />        
-        <text x={cx} y={cy + outerRadius + 20} textAnchor={textAnchor} fill="#333">{`Sales Income $${income}`}</text>        
+        <text x={cx} y={cy + outerRadius + 20} textAnchor={textAnchor} fill="#333">{`${productName} $${income}`}</text>        
         <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
         {`${(percent * 100).toFixed(0)}%`}
       </text>
@@ -47,8 +47,8 @@ export interface IIncomeRank{
 }
 export const RankingIncomesGraph = ({ prop }: IIncomeRank) => {
     const [state, setState] = useState({activeIndex: 0})
-    const renderLabel=(entry)=>{
-      return entry.productName
+    const renderLabel=(e)=>{
+      return e.prop.productName
     }
     const onPieEnter = (data, index) => {
         setState({
@@ -67,17 +67,14 @@ export const RankingIncomesGraph = ({ prop }: IIncomeRank) => {
         >
           <Container maxWidth="xs">
             <Typography variant="h6" color="initial" style={{paddingTop:"30px", textAlign:"center"}}>Ranking 5 products that gave more income</Typography>      
-           </Container>
-        
+           </Container>        
         <ResponsiveContainer width="99%" aspect={2}>
         <PieChart  >
             <Pie 
             activeIndex={state.activeIndex} activeShape={renderActiveShape}
             onMouseEnter={onPieEnter} data={prop} dataKey="income" 
             nameKey="productName" cx="50%" cy="50%" innerRadius="30%" outerRadius="70%"
-            fill="#e28db2" label={renderLabel}  isAnimationActive={true}/>
-
-            
+            fill="#e28db2" label={renderLabel}  isAnimationActive={true}/>            
             
         </PieChart>
         </ResponsiveContainer>

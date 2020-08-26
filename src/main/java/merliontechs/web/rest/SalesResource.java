@@ -1,6 +1,9 @@
 package merliontechs.web.rest;
 
+import liquibase.pro.packaged.T;
+import merliontechs.domain.Product;
 import merliontechs.domain.Sales;
+import merliontechs.domain.enumeration.State;
 import merliontechs.service.SalesService;
 import merliontechs.web.rest.errors.BadRequestAlertException;
 import merliontechs.service.dto.SalesCriteria;
@@ -8,16 +11,24 @@ import merliontechs.service.SalesQueryService;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.concurrent.atomic.LongAdder;
+import java.util.stream.Collectors;
+
 
 /**
  * REST controller for managing {@link merliontechs.domain.Sales}.
@@ -105,6 +116,63 @@ public class SalesResource {
     public ResponseEntity<Long> countSales(SalesCriteria criteria) {
         log.debug("REST request to count Sales by criteria: {}", criteria);
         return ResponseEntity.ok().body(salesQueryService.countByCriteria(criteria));
+    }
+
+    /**
+     * {@code GET  /sales/count} : count all the sales.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/sales/countByDate")
+    public ResponseEntity<JSONObject> countSalesByDate(SalesCriteria criteria) {
+        log.debug("REST request to count Sales by criteria: {}", criteria);
+        List<Sales> entityList = salesService.findAll();
+        Map<LocalDate, LongAdder> salesCount= new HashMap<>();
+        Map<LocalDate, LongAdder> deliveredCount= new HashMap<>();
+        Map<Product, LongAdder> productCount= new HashMap<>();
+        Map<Product, BigDecimal> productSum= new HashMap<>();
+        entityList.forEach(sale -> {
+            LocalDate localDate=sale.getDate();
+            Product product=sale.getProduct();
+            salesCount.putIfAbsent(localDate, new LongAdder());
+            salesCount.get(localDate).increment();
+        if (sale.getState() == State.DELIVERED) {
+            deliveredCount.putIfAbsent(localDate, new LongAdder());
+            deliveredCount.get(localDate).increment();
+        }
+        productCount.putIfAbsent(product, new LongAdder());
+        productCount.get(product).increment();
+        productSum.putIfAbsent(product, BigDecimal.ZERO);
+        productSum.put(product, productSum.get(product).add(product.getPrice()));
+            });
+        JSONObject resp = getJsonArrays(salesCount, deliveredCount, productCount, productSum);
+
+        return ResponseEntity.ok().body(resp);
+    }
+
+    private JSONObject getJsonArrays(Map<LocalDate, LongAdder> salesCount, Map<LocalDate, LongAdder> deliveredCount, Map<Product, LongAdder> productCount, Map<Product, BigDecimal> productSum) {
+        JSONArray ar=countToJson(salesCount.entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toList()),"date","amount");
+        JSONArray b=countToJson(deliveredCount.entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toList()),"date","amount");
+        JSONArray c=countToJson(productCount.entrySet().stream().sorted((a,e)-> (int) (a.getValue().longValue() - e.getValue().longValue())).skip(Math.max(0, salesCount.size() - 4)).collect(Collectors.toList()),"product","amount");
+        JSONArray d=countToJson(productSum.entrySet().stream().sorted(Map.Entry.comparingByValue()).skip(Math.max(0, salesCount.size() - 4)).collect(Collectors.toList()),"product","income");
+        JSONObject o= new JSONObject();
+        o.put("totalSales", ar);
+        o.put("deliveredCount",b);
+        o.put("productAmount",c);
+        o.put("productIncome",d);
+        return o;
+    }
+
+    private <N extends Number> JSONArray countToJson(List<Map.Entry<?,N>> count, String key1, String key2) {
+        final JSONArray j=new JSONArray();
+        count.forEach(entry -> {
+            JSONObject m = new JSONObject();
+            m.put(key1, entry.getKey().toString());
+            m.put(key2, entry.getValue().toString());
+            j.add(m);
+        });
+        return j;
     }
 
     /**

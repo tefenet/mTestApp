@@ -67,8 +67,7 @@ export const RankingProdGraph = ({ prop }: ProdRank) => {
         justify="center"
         alignItems="stretch"
         alignContent="center"
-        wrap="nowrap"
-        zeroMinWidth
+        wrap="nowrap"        
                 
     >       
         <Container maxWidth={false}>
@@ -84,6 +83,7 @@ export const RankingProdGraph = ({ prop }: ProdRank) => {
                 {prop.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                 </Pie>
         </PieChart>
+    
         </ResponsiveContainer>
    </Grid>
 

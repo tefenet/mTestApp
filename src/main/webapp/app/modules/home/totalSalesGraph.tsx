@@ -23,7 +23,7 @@ export const TotalSalesGraph = ({ total }: IDataGraph) => {
         <XAxis dataKey="date">
           <Label value="days" offset={0} position="insideBottom" />
         </XAxis>
-        <YAxis label={{ value: 'total sales', angle: -90, position: 'insideLeft' }}/>
+        <YAxis dataKey="amount" interval={0} label={{ value: 'total sales', angle: -90, position: 'insideLeft' }}/>
         <Tooltip />
         <defs>
         <linearGradient id="colorUv" x1="0%" y1="0%" x2="0%" y2="100%">
